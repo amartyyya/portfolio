@@ -2,7 +2,9 @@ import { dbConnect } from '@/lib/dbConnect';
 import { InfoModel} from '@/model/UserPortfolioInfo';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]/options';
-import  {UserPortfolioInfo} from '@/model/UserPortfolioInfo';
+import  {UserModel} from '@/model/UserPortfolioInfo';
+
+
 
 
 // Helper function to validate portfolio data

@@ -35,19 +35,19 @@ const ProjectSchema = new Schema<Project>({
   title: { type: String, required: true },
   description: { type: String, required: true },
   technologies: { type: [String], required: true },
-  link: { type: String }
+  link: { type: String },
 });
 
 const InfoSchema = new Schema<Info>({
   introduction: { type: String, required: true },
   experience: { type: String, required: true },
   linkedin: { type: String, required: true },
-  codechef: { type: String, match: [/^https?:\/\//, 'Please enter a valid URL'] },
-  codeforces: { type: String, match: [/^https?:\/\//, 'Please enter a valid URL'] },
-  github: { type: String, required: true, match: [/^https?:\/\//, 'Please enter a valid URL'] },
-  leetcode: { type: String, match: [/^https?:\/\//, 'Please enter a valid URL'] },
-  gfg: { type: String, match: [/^https?:\/\//, 'Please enter a valid URL'] },
-  projects: { type: [ProjectSchema], required: true, validate: [arrayMinLength, 'At least one project is required'] }
+  codechef: { type: String, match: [/^https?:\/\//, "Please enter a valid URL"] },
+  codeforces: { type: String, match: [/^https?:\/\//, "Please enter a valid URL"] },
+  github: { type: String, required: true, match: [/^https?:\/\//, "Please enter a valid URL"] },
+  leetcode: { type: String, match: [/^https?:\/\//, "Please enter a valid URL"] },
+  gfg: { type: String, match: [/^https?:\/\//, "Please enter a valid URL"] },
+  projects: { type: [ProjectSchema], required: true, validate: [arrayMinLength, "At least one project is required"] },
 });
 
 const UserSchema: Schema<User> = new Schema({
@@ -55,14 +55,14 @@ const UserSchema: Schema<User> = new Schema({
     type: String,
     required: [true, "Username is required"],
     trim: true,
-    unique: true
+    unique: true,
   },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   verifyCode: { type: String },
   verifyCodeExpiry: { type: Date },
   isVerified: { type: Boolean, default: false },
-  isAcceptingMessage: { type: Boolean, default: true }
+  isAcceptingMessage: { type: Boolean, default: true },
 });
 
 // Helper function
@@ -70,11 +70,20 @@ function arrayMinLength(val: any[]) {
   return val.length >= 1;
 }
 
-// Models
-const InfoModel = (mongoose.models.UserPortfolioInfo as mongoose.Model<Info>) || 
-  mongoose.model<Info>("UserPortfolioInfo", InfoSchema);
+// Model registration
+let UserModel: mongoose.Model<User>;
+let InfoModel: mongoose.Model<Info>;
 
-const UserModel = (mongoose.models.User as mongoose.Model<User>) || 
-  mongoose.model<User>("User", UserSchema);
+try {
+  UserModel = mongoose.model<User>("User");
+} catch (e) {
+  UserModel = mongoose.model<User>("User", UserSchema);
+}
+
+try {
+  InfoModel = mongoose.model<Info>("UserPortfolioInfo");
+} catch (e) {
+  InfoModel = mongoose.model<Info>("UserPortfolioInfo", InfoSchema);
+}
 
 export { InfoModel, UserModel };

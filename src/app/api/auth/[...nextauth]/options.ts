@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 import {dbConnect} from '@/lib/dbConnect';
 import {UserModel} from '@/model/UserPortfolioInfo';
+import { InfoModel } from '@/model/UserPortfolioInfo';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -22,6 +23,8 @@ export const authOptions: NextAuthOptions = {
               { username: credentials.identifier.username},
             ],
           });
+          const info =await InfoModel.find({})
+          console.log("info",info)
           if (!user) {
             throw new Error('No user found with this email');
           }

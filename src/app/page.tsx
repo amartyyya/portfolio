@@ -9,15 +9,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from "@/components/sign-up-UI/form";
-import { Button } from "@/components/sign-up-UI/button";
-import { Input } from "@/components/sign-up-UI/input";
+} from "@/components/sign-up-UI/form"; // Updated path
+import { Button } from "@/components/sign-up-UI/button"; // Updated path
+import { Input } from "@/components/sign-up-UI/input"; // Updated path
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // <-- Use useRouter for redirection
-import { useToast } from '@/hooks/use-toast';
-import { signUpSchema } from '@/schemas/signUpSchema';
+import { useRouter } from 'next/navigation'; // For redirection
+import { signUpSchema } from '@/schemas/signUpSchema'; // Updated path
 import { useMutation } from 'react-query';
 import axios from 'axios';
+import { useToast } from 'src/hooks/use-toast';
 
 export default function SignUpForm() {
   const router = useRouter(); // <-- Initialize router to handle redirection

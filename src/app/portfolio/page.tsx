@@ -9,51 +9,48 @@ import {
 } from "@/components/final-page-portfolio/ui/accordion"
 import { Card } from "@/components/final-page-portfolio/ui/card"
 import { Facebook, Youtube, Twitter, Instagram, Linkedin } from 'lucide-react'
-import { GitHubIcon, CodeForcesIcon, CodeChefIcon, LeetCodeIcon, GFGIcon } from './final-page-portfolio/icons/codingPlatformLogo'
-import { CodeLioLogo } from './final-page-portfolio/icons/codelioLogo'
+import { GitHubIcon, CodeForcesIcon, CodeChefIcon, LeetCodeIcon, GFGIcon } from '@/components/final-page-portfolio/icons/codingPlatformLogo'
+import { CodeLioLogo } from '@/components/final-page-portfolio/icons/codelioLogo'
 import Image from 'next/image'
-import axios from 'axios'
-import { dbConnect } from '@/lib/dbConnect'
-import { InfoModel } from '@/model/UserPortfolioInfo'
-import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/app/api/auth/[...nextauth]/options'
-// import { fetchPortfolioData } from '@/'
 
+interface PortfolioPageProps {
+  portfolioData: {
+    introduction: string
+    experience: string
+    linkedin: string
+    github: string
+    codechef?: string
+    codeforces?: string
+    leetcode?: string
+    gfg?: string
+    profileImage?: File
+    projects: Array<{
+      title: string
+      description: string
+      technologies: string[]
+      link?: string
+    }>
+  }
+}
 
-export default function PortfolioPage() {
+export function PortfolioPage({ portfolioData }: PortfolioPageProps) {
   const [expandedProject, setExpandedProject] = useState<string | null>("item-1")
-  const [portfolioData, setPortfolioData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [profileImageUrl, setProfileImageUrl] = useState<string>("/profile-image.jpg")
 
   useEffect(() => {
-    async function loadPortfolioData() {
-      try {
-        dbConnect();
-        const session = await getServerSession(authOptions);
-        if (!session) {
-          return new Response(
-            JSON.stringify({ success: false, message: 'Unauthorized' }),
-            { status: 401 } // Return 401 if user is not authenticated
-          );
-        }
-        const data = await InfoModel.findOne({ userId: session.user.id });
-        setPortfolioData(data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to load portfolio data')
-        setLoading(false)
-      }
+    if (portfolioData.profileImage) {
+      const imageUrl = URL.createObjectURL(portfolioData.profileImage)
+      setProfileImageUrl(imageUrl)
+      return () => URL.revokeObjectURL(imageUrl)
     }
-    loadPortfolioData()
-  }, [])
+  }, [portfolioData.profileImage])
 
   const stats = [
-    { label: 'GitHub', value: portfolioData?.github, Icon: GitHubIcon },
-    { label: 'CodeForces', value: portfolioData?.codeforces, Icon: CodeForcesIcon },
-    { label: 'CodeChef', value: portfolioData?.codechef, Icon: CodeChefIcon },
-    { label: 'LeetCode', value: portfolioData?.leetcode, Icon: LeetCodeIcon },
-    { label: 'GFG', value: portfolioData?.gfg, Icon: GFGIcon },
+    { label: 'GitHub', value: portfolioData.github, Icon: GitHubIcon },
+    { label: 'CodeForces', value: portfolioData.codeforces, Icon: CodeForcesIcon },
+    { label: 'CodeChef', value: portfolioData.codechef, Icon: CodeChefIcon },
+    { label: 'LeetCode', value: portfolioData.leetcode, Icon: LeetCodeIcon },
+    { label: 'GFG', value: portfolioData.gfg, Icon: GFGIcon },
   ]
 
   const socialLinks = [
@@ -63,14 +60,6 @@ export default function PortfolioPage() {
     { icon: Instagram, name: 'instagram' },
     { icon: Linkedin, name: 'linkedin' },
   ]
-
-  if (loading) {
-    return <div>Loading...</div>
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>
-  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -95,7 +84,7 @@ export default function PortfolioPage() {
           </div>
           <div className="relative aspect-square rounded-lg overflow-hidden">
             <Image
-              src="/profile-image.jpg"
+              src={profileImageUrl}
               alt="Profile"
               fill
               className="object-cover"
@@ -152,7 +141,7 @@ export default function PortfolioPage() {
           onValueChange={(value) => setExpandedProject(value)}
           className="space-y-4"
         >
-          {portfolioData.projects.map((project: any, index: number) => (
+          {portfolioData.projects.map((project, index) => (
             <AccordionItem 
               key={index} 
               value={`item-${index + 1}`}
@@ -207,25 +196,3 @@ export default function PortfolioPage() {
   )
 }
 
-// portfolio-form 
-//    - page.tsx : form react component 
-//      import projectTemplate 
-//               input name, xxxxxx
-//               on Button Click Save Changed
-//                  -- set showTemplate as true
-//    {showTemaplte  &&  <ProjectTemplate data = {name, xxxxxx} >}
-
-
-// x-folder: project-template.tsx
-
-//  url yani folder -> wo hota h ek page
-//  2 urls yni 2 folders in /app/ 
-//  1 folder /url-1
-//  2 folder /url-2
-//  To pass data between 2 pages or urls 
-//  1. using query params - /data?name='Amartya'
-//  2. either store the data in BE/ DB and then pass the document_id = _id in query params
-
-//  PArent Child 
-//  call child component and pass krdiya data
-    
